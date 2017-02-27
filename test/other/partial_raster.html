@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-	<title>ThreeJs test page list</title>
+	<title>测试partial raster性能</title>
 	<style type="text/css">
-		ul{border:dotted 1px #666;}
-		li{background:#ddd; margin-top: 20px; margin-bottom: 20px;}
-		ul.out{list-style-position:outside;}
-		ul.in{list-style-position:inside;}
 	</style>
 </head>
 <body>
-	<div>测试partial raster性能</div>
-	<ul>
-	    <li><a href="three.js-master/examples/webgl_materials.html">webgl_materials.html</a></li>
-	    <li><a href="three.js-master/examples/webgl_buffergeometry_lines.html">webgl_buffergeometry_lines.html</a></li>
-	</ul>
+<div style="background-image:url(http://attach.bbs.miui.com/forum/201702/22/174345ctsas5f9o99z4o4n.jpg);">
+	<span id="num"></span>
+	<img src="http://attach.bbs.miui.com/forum/201702/22/174712mtxdv02d2swf61wq.jpg" width="200" height="80" \>
+	<img src="http://attach.bbs.miui.com/forum/201702/22/175231xczsiys7yyjxel73.jpg" width="200" height="80" \>
+</div>
 </body>
+
+<script type="text/javascript">  
+	var i = 0;  
+	function remainTime() {
+	    document.getElementById('num').innerHTML = i++;
+	    setTimeout("remainTime()",1000);
+	}
+	remainTime();
+</script>  
+
 </html>
