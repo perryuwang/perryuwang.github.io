@@ -9,23 +9,16 @@
 body {
   height: 4000px;
 }
-.spin {
-  -webkit-animation: 3s rotate linear infinite;
-  animation: 3s rotate linear infinite;
-  background: red;
-}
 
-.walkabout-new-school {
+.translatex-div {
   -webkit-animation: 3s slide-transform linear infinite;
   animation: 3s slide-transform linear infinite;
   background: green;
+  width: 84px;
+  height: 53px;
 }
 
 /* keyframes */
-@keyframes rotate {
-  from {transform: rotate(0deg);}
-  to {transform: rotate(360deg);}
-}
 @keyframes slide-transform {
   from {transform: translatex(0);}
   50% {transform: translatex(300px);}
@@ -33,20 +26,12 @@ body {
 }
 
 /* same keyframes, prefixed */
-@-webkit-keyframes rotate {
-  from {-webkit-transform: rotate(0deg);}
-  to {-webkit-transform: rotate(360deg);}
-}
 @-webkit-keyframes slide-transform {
   from {-webkit-transform: translatex(0);}
   50% {-webkit-transform: translatex(300px);}
   to {-webkit-transform: translatex(0);}
 }
 
-div {
-  width: 50px;
-  height: 50px;
-}
 </style>
   
 <script>
@@ -61,8 +46,6 @@ function blockMainThread() {
 <body>
   <h1>CC线程驱动的CSS动画</h1>
   <p><button onclick="blockMainThread()">阻塞主线程5秒</button></p>
-  <p><div class="spin"></div>
-  <p><div class="walkabout-old-school"></div>
-  <p><div class="walkabout-new-school"></div>
+  <p><div class="translatex-div"></div>
 </body>
 </html>
