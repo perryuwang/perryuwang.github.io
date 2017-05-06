@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>无限循环的动画</title>
+<style type="text/css">
+body {
+	background-color: gray;
+	height: 4000px;
+}
+@-webkit-keyframes gogogo {
+	0%{
+		-webkit-transform: rotate(0deg);
+		/*border:5px solid red;*/
+	}
+	50%{
+		-webkit-transform: rotate(180deg);
+		/*background:black;*/
+		/*border:5px solid yellow;*/
+	}
+	100%{
+		-webkit-transform: rotate(360deg);
+		/*background:white;*/
+		/*border:5px solid red;*/
+	}
+}
+
+.loading{
+	margin-top: 500px;
+	border:1px solid black;
+	border-radius:40px;
+	background-color: green;
+	width: 300px;
+	height: 30px;
+	-webkit-animation:gogogo 8s infinite linear;
+	margin:100px;
+}
+</style>
+</head>
+
+<body>
+	<h1>无限循环的动画</h1>
+	<div class="loading"></div>
+</body>
+</html>

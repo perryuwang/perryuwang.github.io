@@ -1,0 +1,54 @@
+
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width">
+<title>Webcore线程驱动的CSS动画</title>
+<style>
+body {
+  height: 4000px;
+}
+.walkabout-old-school {
+  -webkit-animation: 3s slide-margin linear infinite;
+  animation: 3s slide-margin linear infinite;
+  background: blue;
+}
+
+/* keyframes */
+@keyframes slide-margin {
+  from {margin-left: 0;}
+  50% {margin-left: 100%;}
+  to {margin-left: 0;}
+} 
+
+/* same keyframes, prefixed */
+@-webkit-keyframes slide-margin {
+  from {margin-left: 0;}
+  50% {margin-left: 100%;}
+  to {margin-left: 0;}
+}
+
+div {
+  width: 50px;
+  height: 50px;
+}
+</style>
+  
+<script>
+function blockMainThread() {
+  var start = +new Date;
+  console.log("" + new Date());
+  while (+new Date - start < 3000) { }
+  console.log("" + new Date());
+}
+</script>
+</head>
+<body>
+  <h1>Webcore线程驱动的CSS动画</h1>
+  <p><button onclick="blockMainThread()">阻塞主线程3秒</button></p>
+  <p><div class="spin"></div>
+  <p><div class="walkabout-old-school"></div>
+  <p><div class="walkabout-new-school"></div>
+</body>
+</html>

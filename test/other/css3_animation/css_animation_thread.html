@@ -1,0 +1,82 @@
+
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width">
+<title>两种不同线程驱动的CSS动画</title>
+<style>
+body {
+  height: 4000px;
+}
+.spin {
+  -webkit-animation: 3s rotate linear infinite;
+  animation: 3s rotate linear infinite;
+  background: red;
+}
+.walkabout-old-school {
+  -webkit-animation: 3s slide-margin linear infinite;
+  animation: 3s slide-margin linear infinite;
+  background: blue;
+}
+.walkabout-new-school {
+  -webkit-animation: 3s slide-transform linear infinite;
+  animation: 3s slide-transform linear infinite;
+  background: green;
+}
+
+/* keyframes */
+@keyframes rotate {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
+}
+@keyframes slide-transform {
+  from {transform: translatex(0);}
+  50% {transform: translatex(300px);}
+  to {transform: translatex(0);}
+}
+@keyframes slide-margin {
+  from {margin-left: 0;}
+  50% {margin-left: 100%;}
+  to {margin-left: 0;}
+} 
+
+/* same keyframes, prefixed */
+@-webkit-keyframes rotate {
+  from {-webkit-transform: rotate(0deg);}
+  to {-webkit-transform: rotate(360deg);}
+}
+@-webkit-keyframes slide-transform {
+  from {-webkit-transform: translatex(0);}
+  50% {-webkit-transform: translatex(300px);}
+  to {-webkit-transform: translatex(0);}
+}
+@-webkit-keyframes slide-margin {
+  from {margin-left: 0;}
+  50% {margin-left: 100%;}
+  to {margin-left: 0;}
+}
+
+div {
+  width: 30px;
+  height: 30px;
+}
+</style>
+  
+<script>
+function blockMainThread() {
+  var start = +new Date;
+  console.log("" + new Date());
+  while (+new Date - start < 5000) { }
+  console.log("" + new Date());
+}
+</script>
+</head>
+<body>
+  <h1>两种不同线程驱动的CSS动画</h1>
+  <p><button onclick="blockMainThread()">阻塞主线程5秒</button></p>
+  <p><div class="spin"></div>
+  <p><div class="walkabout-old-school"></div>
+  <p><div class="walkabout-new-school"></div>
+</body>
+</html>
