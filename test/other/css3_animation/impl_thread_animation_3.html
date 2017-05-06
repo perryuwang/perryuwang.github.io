@@ -1,0 +1,52 @@
+
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width">
+<title>CC线程驱动的CSS动画：无限旋转</title>
+<style>
+body {
+  height: 4000px;
+}
+
+.rotate-div {
+  -webkit-animation: 3s rotate_animation linear infinite;
+  animation: 3s rotate_animation linear infinite;
+  background: red;
+  background: green;
+  margin-top: 100px;
+  margin-left: 100px; 
+  border-radius: 40px;
+  width: 260px;
+  height: 53px;
+}
+
+/* keyframes */
+@keyframes rotate_animation {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
+}
+
+/* same keyframes, prefixed */
+@-webkit-keyframes rotate_animation {
+  from {-webkit-transform: rotate(0deg);}
+  to {-webkit-transform: rotate(360deg);}
+}
+</style>
+  
+<script>
+function blockMainThread() {
+  var start = +new Date;
+  console.log("" + new Date());
+  while (+new Date - start < 5000) { }
+  console.log("" + new Date());
+}
+</script>
+</head>
+<body>
+  <h1>CC线程驱动的CSS动画</h1>
+  <p><button onclick="blockMainThread()">阻塞主线程5秒</button></p>
+  <div class="rotate-div"></div>
+</body>
+</html>
