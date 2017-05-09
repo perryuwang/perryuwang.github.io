@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width">
+<title>js动画：上下移动, 独立分层</title>
+<style type="text/css">
+	body {
+		background-color: #aaaaaa;
+		height: 5000px;
+	}
+
+	#animation-div {
+		background: green;
+		margin-top: 0px;
+		margin-left: 100px; 
+		border-radius: 40px;
+		width: 84px;
+		height: 53px;
+	}
+</style>
+</head>
+<body>
+	<div id="animation-div" style="margin-top:50px;">
+	</div>
+</body>
+
+<script type="text/javascript">
+	var animation_div = document.getElementById("animation-div");
+	var i = 0;
+	function myInterval() {
+	    setTimeout("myInterval()", 17);
+	    animation_div.style.WebkitTransform="translatey(" + i + "px) translateZ(0)";
+	    i = i + 2;
+	    if (i > 500) i = 0;
+	}
+	setTimeout("myInterval()", 17);
+</script>
+
+</html>
