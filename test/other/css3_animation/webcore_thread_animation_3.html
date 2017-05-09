@@ -1,0 +1,55 @@
+
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width">
+<title>Webcore线程驱动的CSS动画：上下移动, 独立分层</title>
+<style>
+body {
+  height: 4000px;
+}
+.animation-div {
+  -webkit-animation: 6s slide-margin linear infinite;
+  animation: 6s slide-margin linear infinite;
+  background: blue;
+  transform: translateZ(0);
+}
+
+/* keyframes */
+@keyframes slide-margin {
+  from {margin-top: 0;}
+  50% {margin-top: 800px;}
+  to {margin-top: 0;}
+} 
+
+/* same keyframes, prefixed */
+@-webkit-keyframes slide-margin {
+  from {margin-top: 0;}
+  50% {margin-top: 800px;}
+  to {margin-top: 0;}
+}
+
+div {
+  width: 87px;
+  height: 50px;
+  border-radius: 40px;
+  margin-left: 100px;
+}
+</style>
+  
+<script>
+function blockMainThread() {
+  var start = +new Date;
+  console.log("" + new Date());
+  while (+new Date - start < 3000) { }
+  console.log("" + new Date());
+}
+</script>
+</head>
+<body>
+  <h1>Webcore线程驱动的CSS动画</h1>
+  <p><button onclick="blockMainThread()">阻塞主线程3秒</button></p>
+  <p><div class="animation-div"></div>
+</body>
+</html>
