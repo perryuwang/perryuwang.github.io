@@ -1,0 +1,20 @@
+<html>
+<body>
+	<canvas id="test"></canvas>
+</body>
+
+<script>
+	var canvas0=document.getElementById("test");
+	var gl = canvas0.getContext("webgl");
+	var texture1= gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_3D, texture1);
+	buffer0= gl.createBuffer(); 
+	gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, buffer0); 
+	var observer1 = new MutationObserver(function (e) {
+		gl.texImage3D(gl.TEXTURE_3D, 1, gl.R8,  225,664 , 143, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_SHORT_4_4_4_4, 0x41414141);
+	}); 
+	
+	observer1.observe(canvas0, { attributes: true});
+	canvas0.width = 682;
+</script>
+</html>
