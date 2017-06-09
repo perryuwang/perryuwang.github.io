@@ -1,0 +1,80 @@
+
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width">
+<meta name="x5-orientation" content="portrait">
+<title>地图组件同层渲染——测试1</title>
+<style>
+
+body {
+  margin: 0 0 0 0;
+}
+
+.embed-cls {
+  width: 300px;
+  height: 200px;
+  margin-left: 2px;
+  margin-top: 10px;
+}
+
+#fixed_div {
+  position: fixed;
+  left: 2px;
+  top: 10px;
+  width: 80px;
+  height: 150px;
+  background-color: #6FBBF3;
+  border-radius: 16px; 
+}
+
+button {
+  margin-left: 5px;
+  margin-top: 5px;
+  width: 60px;
+  height: 35px;
+  border-radius: 8px; 
+}
+
+form {
+  margin-left: 5px;
+  margin-top: 8px;
+}
+
+input {
+  margin-left: 5px;
+  margin-top: 10px; 
+}
+
+img {
+  width: 80%;
+}
+
+#img_container {
+  margin-left: 10px;
+  margin-top:50px;
+}
+</style>
+  
+<script>
+
+</script>
+</head>
+<body>
+  <div>
+    <embed type="application/x5-native-widget" class="embed-cls" widgetname="tencentmap"></embed>
+    <div id="fixed_div">
+      <button type="button">按钮</button>
+      <form action="" method="get"> 
+        <label><input name="test" type="checkbox" value="" />选项1</label><br/>
+        <label><input name="test" type="checkbox" value="" />选项2 </label><br/>
+        <label><input name="test" type="checkbox" value="" />选项3</label><br/> 
+      </form> 
+    </div>
+  </div>
+  <div id="img_container">
+    <img src="http://www.w3school.com.cn/i/eg_tulip.jpg" />
+  </div>
+</body>
+</html>
