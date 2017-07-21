@@ -117,44 +117,44 @@
 					geometry2 = new THREE.IcosahedronGeometry( radius, 1 ),
 					geometry3 = new THREE.IcosahedronGeometry( radius, 1 );
 
-				for ( var i = 0; i < geometry.faces.length; i ++ ) {
+				// for ( var i = 0; i < geometry.faces.length; i ++ ) {
 
-					f  = geometry.faces[ i ];
-					f2 = geometry2.faces[ i ];
-					f3 = geometry3.faces[ i ];
+				// 	f  = geometry.faces[ i ];
+				// 	f2 = geometry2.faces[ i ];
+				// 	f3 = geometry3.faces[ i ];
 
-					for( var j = 0; j < 3; j++ ) {
+				// 	for( var j = 0; j < 3; j++ ) {
 
-						vertexIndex = f[ faceIndices[ j ] ];
+				// 		vertexIndex = f[ faceIndices[ j ] ];
 
-						p = geometry.vertices[ vertexIndex ];
+				// 		p = geometry.vertices[ vertexIndex ];
 
-						color = new THREE.Color( 0xffffff );
-						color.setHSL( ( p.y / radius + 1 ) / 2, 1.0, 0.5 );
+				// 		color = new THREE.Color( 0xffffff );
+				// 		color.setHSL( ( p.y / radius + 1 ) / 2, 1.0, 0.5 );
 
-						f.vertexColors[ j ] = color;
+				// 		f.vertexColors[ j ] = color;
 
-						color = new THREE.Color( 0xffffff );
-						color.setHSL( 0.0, ( p.y / radius + 1 ) / 2, 0.5 );
+				// 		color = new THREE.Color( 0xffffff );
+				// 		color.setHSL( 0.0, ( p.y / radius + 1 ) / 2, 0.5 );
 
-						f2.vertexColors[ j ] = color;
+				// 		f2.vertexColors[ j ] = color;
 
-						color = new THREE.Color( 0xffffff );
-						color.setHSL( 0.125 * vertexIndex/geometry.vertices.length, 1.0, 0.5 );
+				// 		color = new THREE.Color( 0xffffff );
+				// 		color.setHSL( 0.125 * vertexIndex/geometry.vertices.length, 1.0, 0.5 );
 
-						f3.vertexColors[ j ] = color;
+				// 		f3.vertexColors[ j ] = color;
 
-					}
+				// 	}
 
-				}
+				// }
 
 
-				var materials = [
+				// var materials = [
 
-					new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors, shininess: 0 } ),
-					new THREE.MeshBasicMaterial( { color: 0x000000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
+				// 	new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors, shininess: 0 } ),
+				// 	new THREE.MeshBasicMaterial( { color: 0x000000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
 
-				];
+				// ];
 
 				// group1 = THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 				// group1.position.x = -400;
