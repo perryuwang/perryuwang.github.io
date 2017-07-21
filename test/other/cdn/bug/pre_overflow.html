@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>overflow test</title>
+    <style type="text/css">
+        body {
+            height: 2000px;
+        }
+        #test {
+            background-color: gray;
+            margin-left: 20px;
+            width: 70%;
+            height: 400px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <h2>测试overflow</h2>
+    <div>
+    <pre id="test">
+CompositingReasons CompositingReasonFinder::nonStyleDeterminedDirectReasons(const PaintLayer* layer) const
+{
+    CompositingReasons directReasons = CompositingReasonNone;
+    LayoutObject* layoutObject = layer->layoutObject();
+
+    if (hasOverflowScrollTrigger()) {
+        if (layer->clipParent())
+            directReasons |= CompositingReasonOutOfFlowClipping;
+
+        if (layer->needsCompositedScrolling())
+            directReasons |= CompositingReasonOverflowScrollingTouch;
+    }
+
+    // Composite |layer| if it is inside of an ancestor scrolling layer, but that
+    // scrolling layer is not not on the stacking context ancestor chain of |layer|.
+    // See the definition of the scrollParent property in Layer for more detail.
+    if (const PaintLayer* scrollingAncestor = layer->ancestorScrollingLayer()) {
+        if (scrollingAncestor->needsCompositedScrolling() && layer->scrollParent())
+            directReasons |= CompositingReasonOverflowScrollingParent;
+    }
+
+    if (requiresCompositingForPositionFixed(layer))
+        directReasons |= CompositingReasonPositionFixed;
+
+    directReasons |= layoutObject->additionalCompositingReasons();
+
+    ASSERT(!(directReasons & CompositingReasonComboAllStyleDeterminedReasons));
+    return directReasons;
+}
+    </pre>
+    </div>
+</body>
+</html>

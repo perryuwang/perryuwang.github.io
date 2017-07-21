@@ -1,0 +1,147 @@
+
+
+<html>
+<head>
+<title>Spinning gears and testing preserve-3d in Chrome / Stickman Ventures</title>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript">(function($){function getTransformProperty(element)
+{var properties=['transform','WebkitTransform','MozTransform','msTransform','OTransform'];var p;while(p=properties.shift())
+{if(typeof element.style[p]!='undefined')
+{return p;}}
+return'transform';}
+var proxied=$.fn.css;$.fn.css=function(arg,val)
+{if(typeof $.props['transform']=='undefined'&&(arg=='transform'||(typeof arg=='object'&&typeof arg['transform']!='undefined')))
+{$.props['transform']=getTransformProperty(this.get(0));}
+if($.props['transform']!='transform')
+{if(arg=='transform')
+{arg=$.props['transform'];if(typeof val=='undefined'&&jQuery.style)
+{return jQuery.style(this.get(0),arg);}}
+else if(typeof arg=='object'&&typeof arg['transform']!='undefined')
+{arg[$.props['transform']]=arg['transform'];delete arg['transform'];}}
+return proxied.apply(this,arguments);};})(jQuery);</script>
+<script type="text/javascript">(function($){var rotateUnits='deg';$.fn.rotate=function(val)
+{var style=$(this).css('transform')||'none';if(typeof val=='undefined')
+{if(style)
+{var m=style.match(/rotate\(([^)]+)\)/);if(m&&m[1])
+{return m[1];}}
+return 0;}
+var m=val.toString().match(/^(-?\d+(\.\d+)?)(.+)?$/);if(m)
+{if(m[3])
+{rotateUnits=m[3];}
+$(this).css('transform',style.replace(/none|rotate\([^)]*\)/,'')+'rotate('+m[1]+rotateUnits+')');}
+return this;}
+$.fn.scale=function(val,duration,options)
+{var style=$(this).css('transform');if(typeof val=='undefined')
+{if(style)
+{var m=style.match(/scale\(([^)]+)\)/);if(m&&m[1])
+{return m[1];}}
+return 1;}
+$(this).css('transform',style.replace(/none|scale\([^)]*\)/,'')+'scale('+val+')');return this;}
+var curProxied=$.fx.prototype.cur;$.fx.prototype.cur=function()
+{if(this.prop=='rotate')
+{return parseFloat($(this.elem).rotate());}
+else if(this.prop=='scale')
+{return parseFloat($(this.elem).scale());}
+return curProxied.apply(this,arguments);}
+$.fx.step.rotate=function(fx)
+{$(fx.elem).rotate(fx.now+rotateUnits);}
+$.fx.step.scale=function(fx)
+{$(fx.elem).scale(fx.now);}
+var animateProxied=$.fn.animate;$.fn.animate=function(prop)
+{if(typeof prop['rotate']!='undefined')
+{var m=prop['rotate'].toString().match(/^(([+-]=)?(-?\d+(\.\d+)?))(.+)?$/);if(m&&m[5])
+{rotateUnits=m[5];}
+prop['rotate']=m[1];}
+return animateProxied.apply(this,arguments);}})(jQuery);</script>
+<link href="https://plus.google.com/102838623759327510099" rel="publisher"/>
+
+<script type="text/javascript" src="./FPSMeter.js"></script>
+<script type="text/javascript">
+var char,
+	fpsMeter,
+	log,
+	end;
+
+$(document).ready(function(){$('#go').click(function(){$('#gear1').animate({rotate:'+=1080deg'},20000);$('#gear2').animate({rotate:'+=1080deg'},20000);});
+
+$("#toggle3D").click(function(){$('#gear1').toggleClass('preserve3dbitchez');$('#gear2').toggleClass('preserve3dbitchez');if($("#toggle3Dstate").text()==="OFF"){$("#toggle3Dstate").text("ON");}else{$("#toggle3Dstate").text("OFF");}});
+
+$("#toggleDS").click(function(){$('.gear-body').toggleClass('gear-body-dropshadow');if($("#toggleDSstate").text()==="OFF"){$("#toggleDSstate").text("ON");}else{$("#toggleDSstate").text("OFF");}});});
+
+	  function log(fps) {
+		document.getElementById('fps').innerHTML = fps + "fps";
+	  }
+
+	  function end(avgfps,minfps,maxfps){
+		document.getElementById('fps').innerHTML = "avgfps: " + avgfps + "fps";
+	  }
+
+	function init()
+	{
+		$('#gear1').toggleClass('preserve3dbitchez');
+		$('#gear2').toggleClass('preserve3dbitchez');
+		$('.gear-body').toggleClass('gear-body-dropshadow');
+
+		fpsMeter = new FPSMeter(log,end);
+		fpsMeter.run(20);
+		$('#gear1').animate({rotate:'+=1080deg'},20000);
+		$('#gear2').animate({rotate:'+=1080deg'},20000);
+
+	}
+
+	 // call init once the document is fully loaded
+     window.addEventListener('load', init, false);
+
+</script>
+
+
+
+<style type="text/css">body{padding:25px;margin:25px}#container{position:relative}#show-me-some-gears{position:relative}.button{border-radius:8px;-moz-border-radius:8px;-webkit-border-radius:8px;border:1px solid #999;background-color:#afef8f;-moz-box-shadow:0px 0px 5px #ccc;-webkit-box-shadow:0px 0px 5px #ccc;box-shadow:0px 0px 5px #ccc;padding:4px;text-decoration:none;color:#000;margin:5px}.preserve3dbitchez{-webkit-transform-style:preserve-3d}.scaleup{position:absolute;-moz-transform:scale(2,2);-webkit-transform:scale(2,2);-o-transform:scale(2,2)}.gear-base{position:absolute;left:64px;top:64px;width:256px;height:256px;-moz-transform:rotate(0deg);-webkit-transform:rotate(0deg);-o-transform:rotate(0deg)}.gear-body{position:absolute;left:22px;top:22px;width:212px;height:212px;border-radius:128px;-moz-border-radius:128px;-webkit-border-radius:128px}.gear-body-dropshadow{-moz-box-shadow:0px 0px 45px #000;-webkit-box-shadow:0px 0px 45px #000;box-shadow:0px 0px 45px #000}.gear-tooth{position:absolute;left:114px;width:28px;height:256px}.gear-color-666{background-color:#666}.gear-color-chromeblue{background-color:hsl(200,35%,70%)}.gear-color-redish{background-color:hsl(0,25%,25%)}.gear-color-red{background-color:hsl(0,50%,50%)}.spin0{-moz-transform:rotate(0deg);-webkit-transform:rotate(0deg);-o-transform:rotate(0deg)}.spin30{-moz-transform:rotate(30deg);-webkit-transform:rotate(30deg);-o-transform:rotate(30deg)}.spin60{-moz-transform:rotate(60deg);-webkit-transform:rotate(60deg);-o-transform:rotate(60deg)}.spin90{-moz-transform:rotate(90deg);-webkit-transform:rotate(90deg);-o-transform:rotate(90deg)}.spin120{-moz-transform:rotate(120deg);-webkit-transform:rotate(120deg);-o-transform:rotate(120deg)}.spin150{-moz-transform:rotate(150deg);-webkit-transform:rotate(150deg);-o-transform:rotate(150deg)}</style>
+<head>
+<body>
+<div id="container">
+<div id="actions">
+<p>This test is mainly for Chrome and webkit based-browsers which utilize -webkit-transform-style: preserve-3d; to enable hardware acceleration.
+You can see the difference by the slight blurring that occurs when enabled. To check FPS, you can use about:flags and enable
+the FPS counter (which only appears when hardware acceleration is in use.)</p>
+<p>The animation will work in Firefox 4, but with box shadow on, the performance isn't great (CPU utilization ~25% in our limited testing).</p>
+<div><h3><span id="fps">0fps</span></h3></div>
+
+<div><button onclick="blockMainThread()">block main thread</button></div>
+
+</div>
+<div id="show-me-some-gears">
+<div class="scaleup">
+<div id="gear1" class="gear-base">
+<div class="gear-body gear-color-red"></div>
+<div class="gear-tooth spin0 gear-color-666"></div>
+<div class="gear-tooth spin90 gear-color-666"></div>
+<div class="gear-tooth spin30 gear-color-red"></div>
+<div class="gear-tooth spin60 gear-color-red"></div>
+<div class="gear-tooth spin120 gear-color-red"></div>
+<div class="gear-tooth spin150 gear-color-red"></div>
+</div>
+</div>
+<div id="gear2" class="gear-base">
+<div class="gear-body gear-color-chromeblue"></div>
+<div class="gear-tooth spin0 gear-color-redish"></div>
+<div class="gear-tooth spin90 gear-color-redish"></div>
+<div class="gear-tooth spin30 gear-color-chromeblue"></div>
+<div class="gear-tooth spin60 gear-color-chromeblue"></div>
+<div class="gear-tooth spin120 gear-color-chromeblue"></div>
+<div class="gear-tooth spin150 gear-color-chromeblue"></div>
+</div>
+</div>
+</div>
+<!-- asynchronous google analytics: mathiasbynens.be/notes/async-analytics-snippet -->
+<script>var _gaq=[['_setAccount','UA-20667086-1'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=true;g.src=('https:'==location.protocol?'https://ssl':'http://www')+'.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s);})(document,'script');
+
+function blockMainThread() {
+  var start = +new Date;
+  console.log("" + new Date());
+  while (+new Date - start < 5000) { }
+  console.log("" + new Date());
+}
+</script>
+</body>
+</html>

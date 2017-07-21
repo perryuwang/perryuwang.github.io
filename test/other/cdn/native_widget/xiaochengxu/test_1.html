@@ -1,0 +1,333 @@
+
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width">
+<title>小程序API测试</title>
+<style>
+
+body {
+  margin: 0 0 0 0;
+  font-size:0.8em;
+}
+
+ul { margin-top: 20px; margin-left: 5px; }
+li {margin-top: 2px; margin-bottom: 5px; }
+ul.out { list-style-position:outside; }
+ul.in { list-style-position:inside; }
+
+#mapcontainer {
+  height: 300px;
+  position:relative;
+}
+
+.mapcontrol {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: 2px;
+  bottom: 5px;
+}
+
+#mapid {
+  width: 100%;
+  height: 300px;
+}
+
+.bt {
+  border:none;
+  height:2.5em;
+  background-color:#3E8CD0;
+  color:white;
+  margin-left:0.2em;
+  margin-top:0.3em;
+  width:45%;
+  border-radius:1em;
+}
+
+.bt:active {
+  border:none;
+  height:2.5em;
+  background-color:#3333FF;
+  color:white;
+  margin-left:0.2em;
+  margin-top:0.3em;
+  width:45%;
+  border-radius:1em;
+}
+
+#buttons {
+  display: none;
+}
+
+#info {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  margin-left: 5px;
+  margin-top: 3px;
+  background-color: #B4CDCD;
+  border-radius: 5px;
+  padding-left: 10px;
+}
+</style>
+
+<script type="text/javascript">
+function load() {
+  console.log("load");
+  setTimeout(initMapListeners, 1000);
+}
+
+// 全局变量
+var mapContext;
+// 当前经纬度
+var currentLongitude;
+var currentLatitude;
+var currentScale;
+var icon = "http://res.imtt.qq.com/qqbrowser_x5/perryuwang/native_widget/res/marker_2.png";
+var nextMarkerId = 1;
+var activateMarkerId = 0;
+var activateMarkerLongitude;
+var activateMarkerLatitude;
+
+function initMapListeners() {
+  if (typeof(nativewidget) != "undefined") {
+    mapContext = nativewidget.createMapContext("mapid");
+    console.log("initMapListeners, mapContext:" + mapContext);
+    mapContext.bindMarkerTap("markertap()");
+    mapContext.bindCalloutTap("callouttap()");
+    mapContext.bindControlTap("controltap()");
+    mapContext.bindRegionChange("regionchange()");
+    mapContext.bindMapTap("maptap()");
+
+    getCenterLocation();
+  }
+  var buttons = document.getElementById("buttons");
+  buttons.style.display = "block";
+}
+
+function getCenterLocationSuccess(res) {
+  currentLongitude = res.longitude;
+  currentLatitude = res.latitude;
+  console.log("经度:" + res.longitude + ", 纬度:" + res.latitude);
+}
+
+function getCenterLocation() {
+  var param = {success: "getCenterLocationSuccess"};
+  var jsonStr = JSON.stringify(param);
+  mapContext.getCenterLocation(jsonStr);
+}
+
+function addCircle() {
+  var param = {
+    latitude : currentLatitude,
+    longitude : currentLongitude,
+    color : "#ffff0000",
+    fillColor : "#aaaaaaaa",
+    radius:3000,
+    strokeWidth:2
+  };
+
+  var jsonStr = JSON.stringify(param);
+  var res = mapContext.addCircle(jsonStr);
+  console.log("addCircle, res:" + res + ", current:" + currentLongitude + "," + currentLatitude);
+}
+
+function addMarker() {
+  var w = 120;
+  var h = 120;
+  var title = "经纬度:" + currentLongitude + "," + currentLatitude;
+  var rotate = 0;
+  var alpha = 0.9;
+
+  //自定义气泡样式
+  var callout = {
+    content: "id:" + nextMarkerId + ", 经纬度:" + currentLongitude + "," + currentLatitude,
+    color: "#FFFF0000",
+    fontSize: 12,
+    borderRadius: 10,
+    bgColor: "#FFD1EEEE",
+    padding: 20,
+    display: "BYCLICK"
+  };
+
+  var param = {
+    latitude: currentLatitude,
+    longitude: currentLongitude,
+    id: nextMarkerId,
+    width: w,
+    height: h,
+    iconPath: icon,
+    title: title,
+    rotate: rotate,
+    alpha: alpha,
+    callout: callout
+  };
+
+  var jsonStr = JSON.stringify(param);
+  var res = mapContext.addMarker(jsonStr);
+  nextMarkerId = nextMarkerId + 1;
+  console.log("addMarker res:" + res + ", current:" + "," + currentLongitude + ","+ currentLatitude);
+}
+
+
+function addPolyline() {
+  console.log("addPolyline");
+
+  var polyline = {
+    points: [{
+      longitude: currentLongitude + 0.02,
+      latitude: currentLatitude + 0.03
+    }, {
+      longitude: currentLongitude,
+      latitude: currentLatitude
+    }, {
+      longitude: currentLongitude - 0.01,
+      latitude: currentLatitude
+    }, {
+      longitude: currentLongitude - 0.01,
+      latitude: currentLatitude - 0.02
+    }, {
+      longitude: currentLongitude - 0.03,
+      latitude: currentLatitude - 0.004
+    }, {
+      longitude: currentLongitude - 0.06,
+      latitude: currentLatitude - 0.05
+    }],
+    color:"#FF66CD00",
+    width: 2,
+    arrowLine:true,
+    dottedLine: false
+  };
+
+  mapContext.addPolyline(JSON.stringify(polyline));
+}
+
+var mapcontrolCount = 0;
+function addMapControl() {
+  var mapcontainer = document.getElementById("mapcontainer");
+  var div = document.createElement("div");
+  div.setAttribute("class", "mapcontrol");
+  div.style.right = mapcontrolCount * 30 + 5 + "px";
+  mapcontrolCount = mapcontrolCount + 1;
+
+  var img = document.createElement("img");
+  img.setAttribute("src", "http://res.imtt.qq.com/qqbrowser_x5/perryuwang/native_widget/res/flag.png");
+  img.setAttribute("width", "30px");
+  img.setAttribute("height", "30px");
+  div.appendChild(img);
+  mapcontainer.appendChild(div);
+}
+
+function moveToLocation() {
+  console.log("moveToLocation");
+  mapContext.moveToLocation();
+}
+
+function translateMarkerEnd() {
+  alert("移动marker动画结束");
+}
+
+function translateMarker() {
+ console.log("translateMarker, activateMarkerId:" + activateMarkerId);
+ if (activateMarkerId == 0) {
+  alert("请先点击选择目标！");
+  return;
+ }
+
+ var param = {
+  markerId: activateMarkerId,
+  autoRotate: false,
+  duration: 2000,
+  destination: {
+    latitude: activateMarkerLatitude - 0.01,
+    longitude: activateMarkerLongitude - 0.02
+  },
+  animationEnd: "translateMarkerEnd"
+ };
+ mapContext.translateMarker(JSON.stringify(param));
+ activateMarkerId = 0;
+}
+
+// 事件监听
+function markertap(arg) {
+  activateMarkerId = arg.markerId;
+  activateMarkerLatitude = arg.latitude;
+  activateMarkerLongitude = arg.longitude;
+  console.log("markertap, arg:" + JSON.stringify(arg));
+}
+
+function callouttap(arg) {
+  console.log("callouttap, arg:" + JSON.stringify(arg));
+}
+
+function controltap(arg) {
+  console.log("controltap, arg:" + JSON.stringify(arg));
+}
+
+function regionchange(arg) {
+  currentLongitude = arg.longitude;
+  currentLatitude = arg.latitude;
+  currentScale = arg.scale;
+  console.log("controltap, arg:" + JSON.stringify(arg));
+  document.getElementById("target").innerHTML = "地图中心点: " + currentLongitude + ", " + currentLatitude;
+  document.getElementById("scale").innerHTML = "缩放系数：" + currentScale;
+}
+
+function maptap(arg) {
+  console.log("maptap, arg:" + JSON.stringify(arg));
+}
+</script>
+</head>
+
+<body onload="load()">
+  <div id="mapcontainer">
+    <object id="mapid" type="application/x5-native-widget">
+      <param name="widgetname" value="tencentmap" />
+      <param name="latitude" value="31.8357" />
+      <param name="longitude" value="117.1306" />
+      <param name="scale" value="10" />
+      <param name="show-location" value="true" />
+    </object>
+  </div>
+
+  <div id="buttons">
+    <div id="info">
+      <div id="target">地图中心点:</div>
+      <div id="scale">缩放系数:</div>
+    </div>
+
+    <div>
+      <button type="button" class="bt" onclick="addCircle()">添加圆</button>
+      <button type="button" class="bt" onclick="addMarker()">添加标记</button>
+      <button type="button" class="bt" onclick="addPolyline()">添加路线</button>
+      <button type="button" class="bt" onclick="addMapControl()">添加控件</button>
+      <button type="button" class="bt" onclick="moveToLocation()">移动到定位点</button>
+      <button type="button" class="bt" onclick="translateMarker()">移动标记</button>
+    </div>
+
+    <div>
+      <p style="margin-left: 5px; margin-bottom:5px; background-color:#B4CDCD;">说明：</p>
+      <ul>
+          <li>添加圆：在当前地图的中心点画一个圆</li>
+          <li>添加标记：在当前地图的中心点添加一个标记</li>
+          <li>添加路径：在当前地图的中心点附近添加折线</li>
+          <li>移动到定位点：移动地图到当前的定位点，带有动画</li>
+          <li>移动标记：移动被选中的标记，移动前需在地图上拾取标记物</li>
+      </ul>
+      <div style="margin-left: 5px; margin-top:10px; margin-bottom:5px; background-color:#B4CDCD;">参考微信小程序地图组件定义的API</div>
+      <div style="margin-left: 8px; margin-bottom:5px;">
+        <a href="https://mp.weixin.qq.com/debug/wxadoc/dev/component/map.html">
+          地图组件
+        </a>
+      </div>
+      <div style="margin-left: 8px; margin-bottom:5px;">
+        <a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-map.html">
+          地图API
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
