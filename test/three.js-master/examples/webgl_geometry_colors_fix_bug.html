@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>2</title>
+		<title>3</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -76,24 +76,24 @@
 				canvas.width = 128;
 				canvas.height = 128;
 
-				var context = canvas.getContext( '2d' );
-				var gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
-				gradient.addColorStop( 0.1, 'rgba(210,210,210,1)' );
-				gradient.addColorStop( 1, 'rgba(255,255,255,1)' );
+				// var context = canvas.getContext( '2d' );
+				// var gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
+				// gradient.addColorStop( 0.1, 'rgba(210,210,210,1)' );
+				// gradient.addColorStop( 1, 'rgba(255,255,255,1)' );
 
-				context.fillStyle = gradient;
-				context.fillRect( 0, 0, canvas.width, canvas.height );
+				// context.fillStyle = gradient;
+				// context.fillRect( 0, 0, canvas.width, canvas.height );
 
-				var shadowTexture = new THREE.Texture( canvas );
-				shadowTexture.needsUpdate = true;
+				// var shadowTexture = new THREE.Texture( canvas );
+				// shadowTexture.needsUpdate = true;
 
-				var shadowMaterial = new THREE.MeshBasicMaterial( { map: shadowTexture } );
-				var shadowGeo = new THREE.PlaneBufferGeometry( 300, 300, 1, 1 );
+				// var shadowMaterial = new THREE.MeshBasicMaterial( { map: shadowTexture } );
+				// var shadowGeo = new THREE.PlaneBufferGeometry( 300, 300, 1, 1 );
 
-				mesh = new THREE.Mesh( shadowGeo, shadowMaterial );
-				mesh.position.y = - 250;
-				mesh.rotation.x = - Math.PI / 2;
-				scene.add( mesh );
+				// mesh = new THREE.Mesh( shadowGeo, shadowMaterial );
+				// mesh.position.y = - 250;
+				// mesh.rotation.x = - Math.PI / 2;
+				// scene.add( mesh );
 
 				// mesh = new THREE.Mesh( shadowGeo, shadowMaterial );
 				// mesh.position.y = - 250;
