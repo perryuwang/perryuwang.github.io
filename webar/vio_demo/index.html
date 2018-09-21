@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>vio demo</title>
+  
+  <meta name="viewport" content="width=device-width, user-scalable=no,
+  minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="x5-fullscreen" content="true">
+  <style>
+    body {
+      font-family: monospace;
+      margin: 0;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    #info {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 0);
+      margin: 1em;
+      z-index: 10;
+      display: block;
+      line-height: 2em;
+      text-align: center;
+    }
+    #info * {
+      color: #fff;
+    }
+    .title {
+      background-color: rgba(40, 40, 40, 0.4);
+      padding: 0.4em 0.6em;
+      border-radius: 0.1em;
+    }
+    .links {
+      background-color: rgba(40, 40, 40, 0.6);
+      padding: 0.4em 0.6em;
+      border-radius: 0.1em;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body style="">
+<div id="info">
+  <span class="title">点击屏幕放置模型.</span><br>
+</div>
+<script src="three.js"></script>
+<script src="VRControls.js"></script>
+<script src="GLTFLoader.js"></script>
+<script src="three.ar.js"></script>
+<script>
+
+var vrDisplay;
+var vrControls;
+var arView;
+
+var canvas;
+var camera;
+var scene;
+var renderer;
+
+var colors = [
+  new THREE.Color( 0xffffff ),
+  new THREE.Color( 0xffff00 ),
+  new THREE.Color( 0xff00ff ),
+  new THREE.Color( 0xff0000 ),
+  new THREE.Color( 0x00ffff ),
+  new THREE.Color( 0x00ff00 ),
+  new THREE.Color( 0x0000ff ),
+  new THREE.Color( 0x000000 )
+];
+
+var show_coord = true;
+var avatar = null;
+var clock,mixer;
+var gltf;
+
+window.addEventListener('webarerror', function(event) {
+	alert("WebAR error: " + event.code + " msg: " +event.errorMessage);
+});
+
+window.addEventListener('arenginestatuschange', function(event) {
+	if(event.status == 'DOWNLOADSTART') {
+		console.log('start load webar arengine.');
+	}else if(event.status == 'DOWNLOADING') {
+		// 下载中，进度显示
+		var value = "\n下载进度：" + event.progress;
+		console.log('arenginestatuschange progress: ', event.progress);
+	}else if(event.status == 'SUCCESS') {
+		// 下载成功
+		console.log('arenginestatuschange SUCCESS');
+		//alert("下载成功。");
+	}else if(event.status == 'FAILED') {
+		// 下载失败
+		var value = "\n下载失败，错误码：" + event.error + " 错误信息："+event.message;
+		console.log('arenginestatuschange FAILED error: ', event.error);
+		console.log('arenginestatuschange FAILED message: ', event.message);
+		alert("下载失败："+event.message);
+	}
+});
+
+//启动Slam识别引擎。
+if(navigator.initAREngine) {
+    var arType = 1;
+    if (navigator.AR_TYPE_MAKERLESS)
+		arType = navigator.AR_TYPE_MAKERLESS;
+	navigator.initAREngine(arType).then(function(result) {
+		if(result.success) {
+			console.log('initAREngine loadSuccess');
+			createARDisplay();
+		} else {
+			console.log('initAREngine failed');
+			alert("initAREngine failed");
+			THREE.ARUtils.displayUnsupportedMessage();
+		}
+	});
+} else {
+	createARDisplay();
+	alert("系统内核！！！");
+}
+
+function createARDisplay() {
+	/**
+	 * Use the `getARDisplay()` utility to leverage the WebVR API
+	 * to see if there are any AR-capable WebVR VRDisplays. Returns
+	 * a valid display if found. Otherwise, display the unsupported
+	 * browser message.
+	 */
+	THREE.ARUtils.getARDisplay().then(function (display) {
+		if (display) {
+			vrDisplay = display;
+			init();
+		} else {
+			console.log('getARDisplay failed');
+			THREE.ARUtils.displayUnsupportedMessage();
+		}
+	});
+}
+
+function init() {
+  // Setup the three.js rendering environment
+  renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.autoClear = false;
+  canvas = renderer.domElement;
+  document.body.appendChild(canvas);
+  scene = new THREE.Scene();
+  
+  // Turn on the debugging panel
+  var arDebug = new THREE.ARDebug(vrDisplay, scene, {
+    showLastHit: true,
+    showPoseStatus: true,
+    showPlanes: true,
+  });
+  document.body.appendChild(arDebug.getElement());
+
+  // Creating the ARView, which is the object that handles
+  // the rendering of the camera stream behind the three.js
+  // scene
+  arView = new THREE.ARView(vrDisplay, renderer);
+
+  // The ARPerspectiveCamera is very similar to THREE.PerspectiveCamera,
+  // except when using an AR-capable browser, the camera uses
+  // the projection matrix provided from the device, so that the
+  // perspective camera's depth planes and field of view matches
+  // the physical camera on the device.
+  camera = new THREE.ARPerspectiveCamera(
+    vrDisplay,
+    60,
+    window.innerWidth / window.innerHeight,
+    vrDisplay.depthNear,
+    vrDisplay.depthFar
+  );
+
+  // VRControls is a utility from three.js that applies the device's
+  // orientation/position to the perspective camera, keeping our
+  // real world and virtual world in sync.
+  vrControls = new THREE.VRControls(camera);
+  
+  clock = new THREE.Clock();
+  var model_file = "../../3dmodels/skeleton_animated/scene.gltf";
+  var loader = new THREE.GLTFLoader();
+  loader.load(model_file, function(data) {
+    gltf = data
+    avatar = gltf.scene;
+	avatar.scale.set(0.05, 0.05, 0.05);
+	avatar.rotation.z = Math.PI;
+	avatar.position.set(10000, 10000, 10000);
+
+    var animations = gltf.animations;
+    if (animations && animations.length) {
+      mixer = new THREE.AnimationMixer(avatar);
+      for (var i = 0; i < animations.length; ++i) {
+        var animation = animations[i];
+        mixer.clipAction( animations[ 0 ] ).play();
+      }
+    }
+
+    scene.add( avatar );
+  } );
+  
+  var ambientLight = new THREE.AmbientLight( 0xffffff, 0.2 );
+  scene.add( ambientLight );
+
+  var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+  directionalLight.position.set( 2, -1, 1 );
+  scene.add( directionalLight );
+
+  // Bind our event handlers
+  window.addEventListener('resize', onWindowResize, false);
+  canvas.addEventListener('touchstart', onClick, false);
+
+  // Kick off the render loop!
+  update();
+  
+  if (show_coord) {
+    var posX = new THREE.Vector3(0.10, 0, 0);
+    var posY = new THREE.Vector3(0, 0.10, 0);
+    var posZ = new THREE.Vector3(0, 0, 0.10);
+  
+    var geometryX = new THREE.BoxGeometry( 0.20, 0.001, 0.001 );
+    var materialX = new THREE.MeshBasicMaterial({ color: colors[3] });
+    var cubeX = new THREE.Mesh(geometryX, materialX);
+  
+    var geometryY = new THREE.BoxGeometry( 0.001, 0.20, 0.001 );
+    var materialY = new THREE.MeshBasicMaterial({ color: colors[5] });
+    var cubeY = new THREE.Mesh(geometryY, materialY);
+  
+    var geometryZ = new THREE.BoxGeometry( 0.001, 0.001, 0.20 );
+    var materialZ = new THREE.MeshBasicMaterial({ color: colors[6] });
+    var cubeZ = new THREE.Mesh(geometryZ, materialZ);
+
+    scene.add(cubeX);
+    cubeX.position.copy(posX);
+    scene.add(cubeY);
+    cubeY.position.copy(posY);
+    scene.add(cubeZ);
+    cubeZ.position.copy(posZ);
+  }
+}
+
+/**
+ * The render loop, called once per frame. Handles updating
+ * our scene and rendering.
+ */
+function update() {
+  // Clears color from the frame before rendering the camera (arView) or scene.
+  renderer.clearColor();
+
+  var delta = clock.getDelta();
+  if ( mixer !== undefined ) {
+    mixer.update( delta );
+  }
+  
+  // Render the device's camera stream on screen first of all.
+  // It allows to get the right pose synchronized with the right frame.
+  arView.render();
+
+  // Update our camera projection matrix in the event that
+  // the near or far planes have updated
+  camera.updateProjectionMatrix();
+
+  // Update our perspective camera's positioning
+  vrControls.update();
+
+  // Render our three.js virtual scene
+  renderer.clearDepth();
+  renderer.render(scene, camera);
+
+  // Kick off the requestAnimationFrame to call this function
+  // when a new VRDisplay frame is rendered
+  vrDisplay.requestAnimationFrame(update);
+}
+
+/**
+ * On window resize, update the perspective camera's aspect ratio,
+ * and call `updateProjectionMatrix` so that we can get the latest
+ * projection matrix provided from the device
+ */
+function onWindowResize () {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+/**
+ * When clicking on the screen, fire a ray from where the user clicked
+ * on the screen and if a hit is found, place a cube there.
+ */
+function onClick (e) {
+  // If we don't have a touches object, abort
+  // TODO: is this necessary?
+  if (!e.touches[0]) {
+    return;
+  }
+
+  // Inspect the event object and generate normalize screen coordinates
+  // (between 0 and 1) for the screen position.
+  var x = e.touches[0].pageX / window.innerWidth;
+  var y = e.touches[0].pageY / window.innerHeight;
+
+  // Send a ray from the point of click to the real world surface
+  // and attempt to find a hit. `hitTest` returns an array of potential
+  // hits.
+  var hits = vrDisplay.hitTest(x, y);
+
+  // If a hit is found, just use the first one
+  if (hits && hits.length && avatar) {
+    var hit = hits[0];
+	avatar.position.set(hit.modelMatrix[12], hit.modelMatrix[13], hit.modelMatrix[14]);
+  }
+}
+</script><div id="webgl-error-message" style="font-family: monospace; font-size: 13px; font-weight: normal; text-align: center; background: rgb(255, 255, 255); border: 1px solid black; color: rgb(0, 0, 0); padding: 1.5em; width: 400px; margin: 5em auto 0px;">This augmented reality experience requires
+  WebARonARCore or WebARonARKit, experimental browsers from Google
+  for Android and iOS. Learn more at the <a href="https://developers.google.com/ar/develop/web/getting-started">Google Developers site</a>.</div>
+
+
+</body></html>
