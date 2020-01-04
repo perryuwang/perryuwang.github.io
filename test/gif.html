@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>gif动画测试</title>
+    <style>
+        div {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        function load() {
+            var container = document.getElementById("container");
+            for (var i = 0; i < 50; i += 1) {
+                var child = document.createElement("div");
+                child.innerHTML = "---" + i + "---";
+                container.appendChild(child);
+            }
+        }
+    </script>
+</head>
+
+<body onload="load()">
+<div id="container">
+</div>
+
+<div>这是个gif图片</div>
+<div>
+    <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1392502267,3844417000&fm=26&gp=0.jpg" width="100%">
+</div>
+</body>
+</html>
