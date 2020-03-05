@@ -1,0 +1,77 @@
+<html>
+
+<head>
+
+</head>
+
+<body onload="start()">
+
+<canvas id='gl' width='128' height='128' />
+
+<script>
+
+function web(gl) {
+
+const width = 8190;
+
+const height = 8190;
+
+
+
+var src_fb = gl.createFramebuffer();
+
+gl.bindFramebuffer(gl.READ_FRAMEBUFFER, src_fb);
+
+
+
+var src_rb = gl.createRenderbuffer();
+
+gl.bindRenderbuffer(gl.RENDERBUFFER, src_rb);
+
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA32UI, width, height);
+
+gl.framebufferRenderbuffer(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, src_rb);
+
+
+
+dst_tex = gl.createTexture();
+
+gl.bindTexture(gl.TEXTURE_CUBE_MAP, dst_tex);
+
+for (var i = 3; i < 0x100000000; ++i) {
+
+gl.copyTexImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA32UI, 0, 0, width, height, 0);
+
+}
+
+
+
+gl.copyTexImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA32UI, 0, 0, 16, 16, 0);
+
+gl.copyTexImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA32UI, 0, 0, 16, 16, 0);
+
+}
+
+
+
+function start() {
+
+var canvas = document.getElementById('gl');
+
+var gl = canvas.getContext('webgl2');
+
+
+
+if (gl) {
+
+web(gl);
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
