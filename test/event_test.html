@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    div {
+      margin-top: 10px;
+      margin-bottom: 50px;
+    }
+    #scroll-container {
+      width:80%;
+      height:400px;
+      overflow: scroll;
+    }
+    #scroll-div {
+      background-color: coral;
+      width:1000px;
+      height:2000px;
+    }
+  </style>
+  <title>event test</title>
+</head>
+
+<body>
+  <div>
+    <textarea rows="10" cols="30">
+      这是一个文本框。
+    </textarea>
+  </div>
+
+  <div>
+    <form action="">
+      First name:<br>
+      <input type="text" name="firstname" value="Mickey">
+      <br>
+      Last name:<br>
+      <input type="text" name="lastname" value="Mouse">
+      <br><br>
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+
+  <div>
+    <button type="button" onclick="alert('Hello world!')">Click Me!</button>
+  </div>
+
+  <div>
+    <p><input type="checkbox" name="category" value="今日话题" />今日话题 </p>
+    <p><input type="checkbox" name="category" value="视觉焦点" />视觉焦点</p>
+    <p><input type="checkbox" name="category" value="财经" />财经</p>
+    <p><input type="checkbox" name="category" value="汽车" />汽车</p>
+    <p><input type="checkbox" name="category" value="科技" />科技</p>
+    <p><input type="checkbox" name="category" value="房产" />房产</p>
+    <p><input type="checkbox" name="category" value="旅游" />旅游</p>
+
+    <p><input id="btnOperate" type="button" value="选择" onclick="static_num()" /></p>
+  </div>
+
+  <div id="scroll-container">
+    <div id="scroll-div">
+      这个属性定义溢出元素内容区的内容会如何处理。如果值为 scroll，不论是否需要，用户代理都会提供一种滚动机制。因此，有可能即使元素框中可以放下所有内容也会出现滚动条。默认值是 visible。
+    </div>
+  </div>
+</body>
+
+<script>
+  function static_num() {
+    document.getElementById("btnOperate").onclick = function () {
+      var arr = new Array();
+      var items = document.getElementsByName("category");
+      for (i = 0; i < items.length; i++) {
+        if (items[i].checked) {
+          arr.push(items[i].value);
+        }
+      }
+      alert("选择的个数为：" + arr.length);
+    };
+  };    
+</script>
+
+</html>
