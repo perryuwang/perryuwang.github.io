@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>浏览器信息查询</title>
+  <style>
+    p {
+      font-size: medium;
+    }
+  </style>
+</head>
+
+<body onload="init()">
+  <h1>浏览器信息查询</h1>
+
+  <h3>User Agent:</h3>
+  <p id="ua"></p>
+
+  <h3>GPU信息:</h3>
+  <p id="renderer"></p>
+  <p id="vendor"></p>
+
+  <canvas id="cvs" width="640" height="480"></canvas>
+</body>
+
+<script>
+  function init() {
+    // 查询浏览器user agent
+    const ua = navigator.userAgent || '';
+    console.log(ua);
+    const e = document.getElementById('ua');
+    e.innerHTML = ua;
+
+    const canvas = document.getElementById("cvs");
+    const gl = canvas.getContext("webgl");
+    if (gl) {
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        document.getElementById('renderer').innerHTML = renderer;
+
+        const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+        document.getElementById('vendor').innerHTML = vendor;
+      }
+    }
+
+  }
+</script>
+
+</html>
